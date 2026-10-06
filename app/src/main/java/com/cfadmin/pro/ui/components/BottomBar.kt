@@ -1,4 +1,4 @@
-"app/src/main/java/com/cfadmin/pro/ui/components/BottomBar.kt": `package com.cfadmin.pro.ui.components
+package com.cfadmin.pro.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -192,4 +192,3 @@ private fun DropdownPanel(
         }
     }
 }
-`,
