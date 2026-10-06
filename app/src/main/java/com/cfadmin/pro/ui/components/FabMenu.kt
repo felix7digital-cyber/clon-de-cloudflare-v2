@@ -15,7 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -86,7 +86,7 @@ fun FabMenu(
                         modifier = Modifier.size(28.dp)
                     ) {
                         Icon(
-                            imageVector = if (isPinned) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                            imageVector = if (isPinned) Icons.Filled.Star else Icons.Outlined.Star,
                             contentDescription = if (isPinned) "Desfijar" else "Fijar",
                             tint = if (isPinned) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurfaceVariant,
