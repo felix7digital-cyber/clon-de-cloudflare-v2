@@ -1,14 +1,12 @@
-"app/src/main/java/com/cfadmin/pro/ui/components/BottomBar.kt": `package com.cfadmin.pro.ui.components
+package com.cfadmin.pro.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,7 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Key
-import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,13 +45,18 @@ fun AppBottomBar(
 
     Column {
         if (dropdown != null) {
+            val title = if (dropdown == "recent") "Recientes" else "Fijadas"
+            val routes = if (dropdown == "recent") recent else pinned
+            val emptyMsg = if (dropdown == "recent") "Sin secciones recientes"
+            else "Sin secciones fijadas"
             DropdownPanel(
-                title = if (dropdown == "recent") "Recientes" else "Fijadas",
-                routes = if (dropdown == "recent") recent else pinned,
-                emptyMessage = if (dropdown == "recent")
-                    "Sin secciones recientes"
-                else "Sin secciones fijadas",
-                onNavigate = { onNavigate(it); dropdown = null }
+                title = title,
+                routes = routes,
+                emptyMessage = emptyMsg,
+                onNavigate = {
+                    onNavigate(it)
+                    dropdown = null
+                }
             )
         }
 
@@ -61,46 +64,46 @@ fun AppBottomBar(
             containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 3.dp
         ) {
-            BottomItem(
-                icon = Icons.Default.Home,
+            NavItem(
                 label = "Inicio",
+                icon = Icons.Default.Home,
                 selected = currentRoute == Section.OVERVIEW.route,
                 onClick = { onNavigate(Section.OVERVIEW.route) }
             )
-            BottomItem(
-                icon = Icons.Default.History,
+            NavItem(
+                label = "Pages",
+                icon = Icons.Default.Layers,
+                selected = currentRoute == Section.PAGES.route,
+                onClick = { onNavigate(Section.PAGES.route) }
+            )
+            NavItem(
                 label = "Recientes",
+                icon = Icons.Default.History,
                 selected = false,
                 badge = recent.size.takeIf { it > 0 },
                 onClick = { dropdown = if (dropdown == "recent") null else "recent" }
             )
-            BottomItem(
-                icon = Icons.Default.PushPin,
+            NavItem(
                 label = "Fijadas",
+                icon = Icons.Default.Search,
                 selected = false,
                 badge = pinned.size.takeIf { it > 0 },
                 onClick = { dropdown = if (dropdown == "pinned") null else "pinned" }
             )
-            BottomItem(
-                icon = Icons.Default.Key,
+            NavItem(
                 label = "Tokens",
+                icon = Icons.Default.Key,
                 selected = currentRoute == Section.TOKENS.route,
                 onClick = { onNavigate(Section.TOKENS.route) }
-            )
-            BottomItem(
-                icon = Icons.Default.Search,
-                label = "Buscar",
-                selected = false,
-                onClick = { onNavigate(Section.OVERVIEW.route) }
             )
         }
     }
 }
 
 @Composable
-private fun RowScope.BottomItem(
-    icon: ImageVector,
+private fun NavItem(
     label: String,
+    icon: ImageVector,
     selected: Boolean,
     badge: Int? = null,
     onClick: () -> Unit
@@ -115,12 +118,11 @@ private fun RowScope.BottomItem(
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .offset(x = 8.dp, y = (-6).dp)
                             .background(MaterialTheme.colorScheme.primary, CircleShape)
                             .padding(horizontal = 4.dp, vertical = 1.dp)
                     ) {
                         Text(
-                            badge.toString(),
+                            text = badge.toString(),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.labelSmall
                         )
@@ -187,4 +189,3 @@ private fun DropdownPanel(
         }
     }
 }
-`,
