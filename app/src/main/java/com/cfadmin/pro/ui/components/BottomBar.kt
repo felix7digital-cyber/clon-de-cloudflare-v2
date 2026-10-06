@@ -1,12 +1,14 @@
-package com.cfadmin.pro.ui.components
+"app/src/main/java/com/cfadmin/pro/ui/components/BottomBar.kt": `package com.cfadmin.pro.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -15,7 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Key
-import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.cfadmin.pro.ui.nav.Section
 
@@ -47,7 +50,8 @@ fun AppBottomBar(
             DropdownPanel(
                 title = if (dropdown == "recent") "Recientes" else "Fijadas",
                 routes = if (dropdown == "recent") recent else pinned,
-                emptyMessage = if (dropdown == "recent") "Sin secciones recientes"
+                emptyMessage = if (dropdown == "recent")
+                    "Sin secciones recientes"
                 else "Sin secciones fijadas",
                 onNavigate = { onNavigate(it); dropdown = null }
             )
@@ -57,46 +61,46 @@ fun AppBottomBar(
             containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 3.dp
         ) {
-            NavItem(
-                label = "Inicio",
+            BottomItem(
                 icon = Icons.Default.Home,
+                label = "Inicio",
                 selected = currentRoute == Section.OVERVIEW.route,
                 onClick = { onNavigate(Section.OVERVIEW.route) }
             )
-            NavItem(
-                label = "Pages",
-                icon = Icons.Default.Layers,
-                selected = currentRoute == Section.PAGES.route,
-                onClick = { onNavigate(Section.PAGES.route) }
-            )
-            NavItem(
-                label = "Recientes",
+            BottomItem(
                 icon = Icons.Default.History,
+                label = "Recientes",
                 selected = false,
                 badge = recent.size.takeIf { it > 0 },
                 onClick = { dropdown = if (dropdown == "recent") null else "recent" }
             )
-            NavItem(
+            BottomItem(
+                icon = Icons.Default.PushPin,
                 label = "Fijadas",
-                icon = Icons.Default.Search,
                 selected = false,
                 badge = pinned.size.takeIf { it > 0 },
                 onClick = { dropdown = if (dropdown == "pinned") null else "pinned" }
             )
-            NavItem(
-                label = "Tokens",
+            BottomItem(
                 icon = Icons.Default.Key,
+                label = "Tokens",
                 selected = currentRoute == Section.TOKENS.route,
                 onClick = { onNavigate(Section.TOKENS.route) }
+            )
+            BottomItem(
+                icon = Icons.Default.Search,
+                label = "Buscar",
+                selected = false,
+                onClick = { onNavigate(Section.OVERVIEW.route) }
             )
         }
     }
 }
 
 @Composable
-private fun NavItem(
+private fun RowScope.BottomItem(
+    icon: ImageVector,
     label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
     selected: Boolean,
     badge: Int? = null,
     onClick: () -> Unit
@@ -111,6 +115,7 @@ private fun NavItem(
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
+                            .offset(x = 8.dp, y = (-6).dp)
                             .background(MaterialTheme.colorScheme.primary, CircleShape)
                             .padding(horizontal = 4.dp, vertical = 1.dp)
                     ) {
@@ -182,3 +187,4 @@ private fun DropdownPanel(
         }
     }
 }
+`,
