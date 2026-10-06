@@ -32,11 +32,14 @@ interface CloudflareApi {
         @Query("per_page") perPage: Int = 50
     ): CfResponse<List<Account>>
 
+    // ---------- Pages ----------
+    // OJO: Pages limita per_page a 25 maximo. Poniendo 100 devuelve HTTP 400.
+
     @GET("accounts/{accountId}/pages/projects")
     suspend fun listPagesProjects(
         @Path("accountId") accountId: String,
         @Query("page") page: Int = 1,
-        @Query("per_page") perPage: Int = 100
+        @Query("per_page") perPage: Int = 25
     ): CfResponse<List<PagesProject>>
 
     @GET("accounts/{accountId}/pages/projects/{projectName}")
@@ -64,6 +67,8 @@ interface CloudflareApi {
         @Path("projectName") projectName: String
     ): CfResponse<JsonElement>
 
+    // ---------- D1 ----------
+
     @GET("accounts/{accountId}/d1/database")
     suspend fun listD1Databases(
         @Path("accountId") accountId: String
@@ -75,6 +80,8 @@ interface CloudflareApi {
         @Body body: CreateD1Request
     ): CfResponse<D1Database>
 
+    // ---------- R2 ----------
+
     @GET("accounts/{accountId}/r2/buckets")
     suspend fun listR2Buckets(
         @Path("accountId") accountId: String
@@ -85,6 +92,8 @@ interface CloudflareApi {
         @Path("accountId") accountId: String,
         @Body body: CreateR2Request
     ): CfResponse<JsonElement>
+
+    // ---------- KV ----------
 
     @GET("accounts/{accountId}/storage/kv/namespaces")
     suspend fun listKvNamespaces(
