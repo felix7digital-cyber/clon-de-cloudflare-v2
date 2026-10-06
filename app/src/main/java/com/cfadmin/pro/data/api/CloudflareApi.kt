@@ -19,27 +19,23 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface CloudflareApi {
 
     @GET("user/tokens/verify")
     suspend fun verifyToken(): CfResponse<TokenVerifyResult>
 
+    // Sin paginacion — la API devuelve las cuentas del usuario directamente
     @GET("accounts")
-    suspend fun listAccounts(
-        @Query("page") page: Int = 1,
-        @Query("per_page") perPage: Int = 50
-    ): CfResponse<List<Account>>
+    suspend fun listAccounts(): CfResponse<List<Account>>
 
     // ---------- Pages ----------
-    // OJO: Pages limita per_page a 25 maximo. Poniendo 100 devuelve HTTP 400.
+    // SIN parametros de paginacion — la API devuelve hasta 25 por defecto
+    // y ya no acepta page/per_page en este endpoint
 
     @GET("accounts/{accountId}/pages/projects")
     suspend fun listPagesProjects(
-        @Path("accountId") accountId: String,
-        @Query("page") page: Int = 1,
-        @Query("per_page") perPage: Int = 25
+        @Path("accountId") accountId: String
     ): CfResponse<List<PagesProject>>
 
     @GET("accounts/{accountId}/pages/projects/{projectName}")
@@ -97,9 +93,7 @@ interface CloudflareApi {
 
     @GET("accounts/{accountId}/storage/kv/namespaces")
     suspend fun listKvNamespaces(
-        @Path("accountId") accountId: String,
-        @Query("page") page: Int = 1,
-        @Query("per_page") perPage: Int = 100
+        @Path("accountId") accountId: String
     ): CfResponse<List<KvNamespace>>
 
     @POST("accounts/{accountId}/storage/kv/namespaces")
