@@ -121,7 +121,8 @@ private fun MainShell(appViewModel: AppViewModel) {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                CfNavGraph()
+                // Aquí pasamos el MISMO navController al NavGraph
+                CfNavGraph(navController = navController)
             }
         }
 
