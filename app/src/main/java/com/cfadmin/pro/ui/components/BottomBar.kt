@@ -2,6 +2,7 @@ package com.cfadmin.pro.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
@@ -19,8 +21,6 @@ import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cfadmin.pro.ui.nav.Section
 
@@ -60,78 +61,108 @@ fun AppBottomBar(
             )
         }
 
-        NavigationBar(
-            containerColor = MaterialTheme.colorScheme.surface,
-            tonalElevation = 3.dp
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 3.dp,
+            shadowElevation = 8.dp,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            NavItem(
-                label = "Inicio",
-                icon = Icons.Default.Home,
-                selected = currentRoute == Section.OVERVIEW.route,
-                onClick = { onNavigate(Section.OVERVIEW.route) }
-            )
-            NavItem(
-                label = "Pages",
-                icon = Icons.Default.Layers,
-                selected = currentRoute == Section.PAGES.route,
-                onClick = { onNavigate(Section.PAGES.route) }
-            )
-            NavItem(
-                label = "Recientes",
-                icon = Icons.Default.History,
-                selected = false,
-                badge = recent.size.takeIf { it > 0 },
-                onClick = { dropdown = if (dropdown == "recent") null else "recent" }
-            )
-            NavItem(
-                label = "Fijadas",
-                icon = Icons.Default.Search,
-                selected = false,
-                badge = pinned.size.takeIf { it > 0 },
-                onClick = { dropdown = if (dropdown == "pinned") null else "pinned" }
-            )
-            NavItem(
-                label = "Tokens",
-                icon = Icons.Default.Key,
-                selected = currentRoute == Section.TOKENS.route,
-                onClick = { onNavigate(Section.TOKENS.route) }
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BarButton(
+                    label = "Inicio",
+                    icon = Icons.Default.Home,
+                    selected = currentRoute == Section.OVERVIEW.route,
+                    badge = null,
+                    onClick = { onNavigate(Section.OVERVIEW.route) }
+                )
+                BarButton(
+                    label = "Pages",
+                    icon = Icons.Default.Layers,
+                    selected = currentRoute == Section.PAGES.route,
+                    badge = null,
+                    onClick = { onNavigate(Section.PAGES.route) }
+                )
+                BarButton(
+                    label = "Recientes",
+                    icon = Icons.Default.History,
+                    selected = false,
+                    badge = recent.size.takeIf { it > 0 },
+                    onClick = { dropdown = if (dropdown == "recent") null else "recent" }
+                )
+                BarButton(
+                    label = "Fijadas",
+                    icon = Icons.Default.Search,
+                    selected = false,
+                    badge = pinned.size.takeIf { it > 0 },
+                    onClick = { dropdown = if (dropdown == "pinned") null else "pinned" }
+                )
+                BarButton(
+                    label = "Tokens",
+                    icon = Icons.Default.Key,
+                    selected = currentRoute == Section.TOKENS.route,
+                    badge = null,
+                    onClick = { onNavigate(Section.TOKENS.route) }
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun NavItem(
+private fun BarButton(
     label: String,
     icon: ImageVector,
     selected: Boolean,
-    badge: Int? = null,
+    badge: Int?,
     onClick: () -> Unit
 ) {
-    NavigationBarItem(
-        selected = selected,
-        onClick = onClick,
-        icon = {
-            Box {
-                Icon(icon, contentDescription = label)
-                if (badge != null) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                            .padding(horizontal = 4.dp, vertical = 1.dp)
-                    ) {
-                        Text(
-                            text = badge.toString(),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
+    val tint = if (selected) MaterialTheme.colorScheme.primary
+    else MaterialTheme.colorScheme.onSurfaceVariant
+
+    Column(
+        modifier = Modifier
+            .width(72.dp)
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = tint,
+                modifier = Modifier.size(24.dp)
+            )
+            if (badge != null) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                        .padding(horizontal = 4.dp, vertical = 1.dp)
+                ) {
+                    Text(
+                        text = badge.toString(),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
-        },
-        label = { Text(label, style = MaterialTheme.typography.labelSmall) }
-    )
+        }
+        Spacer(Modifier.size(2.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = tint,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+    }
 }
 
 @Composable
@@ -145,7 +176,7 @@ private fun DropdownPanel(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 4.dp),
-        shape = MaterialTheme.shapes.medium,
+        shape = RoundedCornerShape(12.dp),
         tonalElevation = 6.dp,
         shadowElevation = 8.dp
     ) {
