@@ -50,7 +50,4 @@ object CloudflareClient {
 
         return retrofit.create(CloudflareApi::class.java)
     }
-
-    /** Expuesto para que los repositorios puedan parsear bodies de error. */
-    val errorParser: Json get() = json
 }
