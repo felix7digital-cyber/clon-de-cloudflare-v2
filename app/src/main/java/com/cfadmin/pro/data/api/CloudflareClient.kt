@@ -25,6 +25,7 @@ object CloudflareClient {
             val request = chain.request().newBuilder()
                 .header("Authorization", "Bearer $token")
                 .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
                 .build()
             chain.proceed(request)
         }
@@ -49,4 +50,7 @@ object CloudflareClient {
 
         return retrofit.create(CloudflareApi::class.java)
     }
+
+    /** Expuesto para que los repositorios puedan parsear bodies de error. */
+    val errorParser: Json get() = json
 }
