@@ -1,26 +1,30 @@
-package com.cfadmin.pro.ui.components
+"app/src/main/java/com/cfadmin/pro/ui/components/BottomBar.kt": `package com.cfadmin.pro.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Key
-import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cfadmin.pro.ui.nav.Section
 
@@ -44,125 +47,94 @@ fun AppBottomBar(
 ) {
     var dropdown by remember { mutableStateOf<String?>(null) }
 
-    Column {
+    Column(
+        modifier = Modifier.navigationBarsPadding()
+    ) {
         if (dropdown != null) {
-            val title = if (dropdown == "recent") "Recientes" else "Fijadas"
-            val routes = if (dropdown == "recent") recent else pinned
-            val emptyMsg = if (dropdown == "recent") "Sin secciones recientes"
-            else "Sin secciones fijadas"
             DropdownPanel(
-                title = title,
-                routes = routes,
-                emptyMessage = emptyMsg,
-                onNavigate = {
-                    onNavigate(it)
-                    dropdown = null
-                }
+                title = if (dropdown == "recent") "Recientes" else "Fijadas",
+                routes = if (dropdown == "recent") recent else pinned,
+                emptyMessage = if (dropdown == "recent")
+                    "Sin secciones recientes"
+                else "Sin secciones fijadas",
+                onNavigate = { onNavigate(it); dropdown = null }
             )
         }
 
-        Surface(
-            color = MaterialTheme.colorScheme.surface,
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 3.dp,
-            shadowElevation = 8.dp,
-            modifier = Modifier.fillMaxWidth()
+            windowInsets = WindowInsets(0, 0, 0, 0)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BarButton(
-                    label = "Inicio",
-                    icon = Icons.Default.Home,
-                    selected = currentRoute == Section.OVERVIEW.route,
-                    badge = null,
-                    onClick = { onNavigate(Section.OVERVIEW.route) }
-                )
-                BarButton(
-                    label = "Pages",
-                    icon = Icons.Default.Layers,
-                    selected = currentRoute == Section.PAGES.route,
-                    badge = null,
-                    onClick = { onNavigate(Section.PAGES.route) }
-                )
-                BarButton(
-                    label = "Recientes",
-                    icon = Icons.Default.History,
-                    selected = false,
-                    badge = recent.size.takeIf { it > 0 },
-                    onClick = { dropdown = if (dropdown == "recent") null else "recent" }
-                )
-                BarButton(
-                    label = "Fijadas",
-                    icon = Icons.Default.Search,
-                    selected = false,
-                    badge = pinned.size.takeIf { it > 0 },
-                    onClick = { dropdown = if (dropdown == "pinned") null else "pinned" }
-                )
-                BarButton(
-                    label = "Tokens",
-                    icon = Icons.Default.Key,
-                    selected = currentRoute == Section.TOKENS.route,
-                    badge = null,
-                    onClick = { onNavigate(Section.TOKENS.route) }
-                )
-            }
+            BottomItem(
+                icon = Icons.Default.Home,
+                label = "Inicio",
+                selected = currentRoute == Section.OVERVIEW.route,
+                onClick = { onNavigate(Section.OVERVIEW.route) }
+            )
+            BottomItem(
+                icon = Icons.Default.History,
+                label = "Recientes",
+                selected = false,
+                badge = recent.size.takeIf { it > 0 },
+                onClick = { dropdown = if (dropdown == "recent") null else "recent" }
+            )
+            BottomItem(
+                icon = Icons.Default.PushPin,
+                label = "Fijadas",
+                selected = false,
+                badge = pinned.size.takeIf { it > 0 },
+                onClick = { dropdown = if (dropdown == "pinned") null else "pinned" }
+            )
+            BottomItem(
+                icon = Icons.Default.Key,
+                label = "Tokens",
+                selected = currentRoute == Section.TOKENS.route,
+                onClick = { onNavigate(Section.TOKENS.route) }
+            )
+            BottomItem(
+                icon = Icons.Default.Search,
+                label = "Buscar",
+                selected = false,
+                onClick = { onNavigate(Section.OVERVIEW.route) }
+            )
         }
     }
 }
 
 @Composable
-private fun BarButton(
-    label: String,
+private fun RowScope.BottomItem(
     icon: ImageVector,
+    label: String,
     selected: Boolean,
-    badge: Int?,
+    badge: Int? = null,
     onClick: () -> Unit
 ) {
-    val tint = if (selected) MaterialTheme.colorScheme.primary
-    else MaterialTheme.colorScheme.onSurfaceVariant
-
-    Column(
-        modifier = Modifier
-            .width(72.dp)
-            .clickable(onClick = onClick)
-            .padding(vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                tint = tint,
-                modifier = Modifier.size(24.dp)
-            )
-            if (badge != null) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
-                        .padding(horizontal = 4.dp, vertical = 1.dp)
-                ) {
-                    Text(
-                        text = badge.toString(),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.labelSmall
-                    )
+    NavigationBarItem(
+        selected = selected,
+        onClick = onClick,
+        icon = {
+            Box {
+                Icon(icon, contentDescription = label)
+                if (badge != null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .offset(x = 8.dp, y = (-6).dp)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                            .padding(horizontal = 4.dp, vertical = 1.dp)
+                    ) {
+                        Text(
+                            badge.toString(),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
                 }
             }
-        }
-        Spacer(Modifier.size(2.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = tint,
-            textAlign = TextAlign.Center,
-            maxLines = 1
-        )
-    }
+        },
+        label = { Text(label, style = MaterialTheme.typography.labelSmall) }
+    )
 }
 
 @Composable
@@ -176,7 +148,7 @@ private fun DropdownPanel(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 4.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         tonalElevation = 6.dp,
         shadowElevation = 8.dp
     ) {
@@ -220,3 +192,4 @@ private fun DropdownPanel(
         }
     }
 }
+`,
