@@ -1,19 +1,17 @@
 package com.cfadmin.pro.ui.nav
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.cfadmin.pro.ui.screens.pages.PagesDetailScreen
 import com.cfadmin.pro.ui.screens.pages.PagesListScreen
 import com.cfadmin.pro.ui.screens.placeholder.PlaceholderScreen
 
 @Composable
-fun CfNavGraph() {
-    val navController = rememberNavController()
-
+fun CfNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = Section.OVERVIEW.route
